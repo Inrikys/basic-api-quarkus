@@ -7,7 +7,7 @@ import org.inrikys.domain.ports.GetUserByEmailPort;
 import org.inrikys.domain.ports.ReviewProductPort;
 
 @ApplicationScoped
-public class CreateReview {
+public class CreateNewReview {
 
     private GetUserByEmailPort getUserById;
     private GetProductByIdPort getProductById;

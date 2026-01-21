@@ -6,7 +6,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 import org.inrikys.adapters.api.dtos.CreateReviewRequest;
-import org.inrikys.domain.services.CreateReview;
+import org.inrikys.domain.services.CreateNewReview;
 
 import java.net.URI;
 import java.util.UUID;
@@ -16,10 +16,10 @@ import java.util.UUID;
 @Produces(MediaType.APPLICATION_JSON)
 public class CreateReviewController {
 
-    private final CreateReview createReview;
+    private final CreateNewReview createNewReview;
 
-    public CreateReviewController(CreateReview createReview) {
-        this.createReview = createReview;
+    public CreateReviewController(CreateNewReview createNewReview) {
+        this.createNewReview = createNewReview;
     }
 
 

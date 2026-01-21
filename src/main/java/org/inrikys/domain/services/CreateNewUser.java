@@ -1,6 +1,5 @@
 package org.inrikys.domain.services;
 
-import jakarta.transaction.Transactional;
 import org.inrikys.domain.models.User;
 import org.inrikys.domain.ports.CreateNewUserPort;
 

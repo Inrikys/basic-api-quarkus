@@ -18,7 +18,7 @@ public class UserEntity {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "email", nullable = false)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @CreationTimestamp
@@ -35,8 +35,10 @@ public class UserEntity {
         this.email = email;
     }
 
-    public static UserEntity newUserFromUser(User user) {
-        return new UserEntity(user.getName(), user.getEmail());
+    public UserEntity(User user) {
+        this.id = user.getId();
+        this.name = user.getName();
+        this.email = user.getEmail();
     }
 
     public User toUser() {

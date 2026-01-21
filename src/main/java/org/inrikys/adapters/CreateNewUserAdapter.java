@@ -28,12 +28,9 @@ public class CreateNewUserAdapter implements CreateNewUserPort {
             // Idempotencia
         }
 
-        UserEntity userEntity = UserEntity.newUserFromUser(newUser);
+        UserEntity userEntity = new UserEntity(newUser);
         userRepository.persist(userEntity);
 
-        UserEntity newUserEntity = userRepository.findByEmail(newUser.getEmail())
-                .orElseThrow(() -> new RuntimeException("Error while saving new user"));
-
-        return newUserEntity.toUser();
+        return userEntity.toUser();
     }
 }
