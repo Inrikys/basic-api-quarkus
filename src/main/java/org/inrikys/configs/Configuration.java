@@ -33,8 +33,9 @@ public class Configuration {
 
     @Produces
     @ApplicationScoped
-    public CreateNewReview createNewReview(GetUsersPort getUsersPort, GetProductsPort getProductsPort, CreateNewReviewPort createNewReviewPort) {
-        return new CreateNewReview(getUsersPort, getProductsPort, createNewReviewPort);
+    public CreateNewReview createNewReview(GetUsersPort getUsersPort, GetProductsPort getProductsPort,
+                                           CreateNewReviewPort createNewReviewPort, EmitNewReviewEventPort emitNewReviewEventPort) {
+        return new CreateNewReview(getUsersPort, getProductsPort, createNewReviewPort, emitNewReviewEventPort);
     }
 
 }

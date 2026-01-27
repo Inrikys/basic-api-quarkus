@@ -171,3 +171,30 @@ If you want to learn more about building native executables, please consult <htt
 Easily start your REST Web Services
 
 [Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
+
+
+# Kafka Standalone
+Important link
+Kafka - https://kafka.apache.org/downloads  
+Java - https://www.oracle.com/java/technolog...
+
+Kafka version: 3.9.1
+
+Run command to generate UUID
+kafka-storage.bat random-uuid
+
+Run the formatting command:
+kafka-storage.bat format -t Bc_54yc5ToWT4_U3zwvo2g -c C:\projetos\tools\kafka\config\kraft\server.properties
+
+Start the Kafka Server using below Command
+kafka-server-start.bat C:\projetos\tools\kafka\config\kraft\server.properties
+
+Open new CMD keep Kafka server cmd running.
+kafka-topics.bat --create --topic reviews --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1
+
+In the new CMD which is open run below command
+Producer (send messages):
+kafka-console-producer.bat --topic reviews --bootstrap-server localhost:9092
+
+Open another New CMD: Run below
+kafka-console-consumer.bat --topic reviews --from-beginning --bootstrap-server localhost:9092
