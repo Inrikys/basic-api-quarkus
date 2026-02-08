@@ -3,14 +3,11 @@ package org.inrikys.adapters.message.kafka.in;
 import io.smallrye.reactive.messaging.kafka.api.IncomingKafkaRecordMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.kafka.common.header.Header;
-import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
-import org.inrikys.adapters.CreateNewUserAdapter;
 import org.jboss.logging.Logger;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Optional;
 import java.util.concurrent.CompletionStage;
 
 @ApplicationScoped

@@ -1,5 +1,6 @@
 package org.inrikys.adapters.api.controllers;
 
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.MediaType;
@@ -24,7 +25,7 @@ public class CreateReviewController {
 
 
     @POST
-    public Response createReview(@PathParam("id") String productId, CreateReviewRequest request, @Context UriInfo uriInfo) {
+    public Response createReview(@PathParam("id") String productId, @Valid CreateReviewRequest request, @Context UriInfo uriInfo) {
 
         Review review = request.toReview(Long.parseLong(productId));
         Review newReview = createNewReview.create(review);

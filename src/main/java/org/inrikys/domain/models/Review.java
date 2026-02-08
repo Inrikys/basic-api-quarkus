@@ -18,10 +18,10 @@ public class Review {
     private LocalDateTime creationDate;
     private LocalDateTime updateDate;
 
-    public Review() {
-    }
-
     public Review(Long id, Long productId, Long userId, Integer rating, String commentary) {
+
+        validateRating(rating);
+
         this.id = id;
         this.productId = productId;
         this.userId = userId;
@@ -30,6 +30,9 @@ public class Review {
     }
 
     public Review(Long id, Long productId, Long userId, Integer rating, String commentary, ReviewStatus status, LocalDateTime creationDate, LocalDateTime updateDate) {
+
+        validateRating(rating);
+
         this.id = id;
         this.productId = productId;
         this.userId = userId;
@@ -42,6 +45,18 @@ public class Review {
 
     public ReviewEntity toReviewEntity(ProductEntity product, UserEntity user) {
         return new ReviewEntity(id, product, user, rating, commentary, ReviewStatus.APPROVED, creationDate, updateDate);
+    }
+
+    // Mantendo regra de validação dentro do domínio também
+    void validateRating(Integer rating) {
+
+        if (rating == null) {
+            throw new IllegalArgumentException("Rating deve estar entre 1 e 5");
+        }
+
+        if (rating < 1 || rating > 5) {
+            throw new IllegalArgumentException("Rating deve estar entre 1 e 5");
+        }
     }
 
 

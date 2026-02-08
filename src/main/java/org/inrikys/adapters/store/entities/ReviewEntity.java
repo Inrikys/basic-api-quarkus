@@ -9,7 +9,12 @@ import org.inrikys.domain.models.Review;
 import java.time.LocalDateTime;
 
 @Entity(name = "review")
-@Table(name = "REVIEWS")
+@Table(name = "REVIEWS", indexes = {
+        @Index(
+                name = "idx_review_user_product",
+                columnList = "user_id, product_id"
+        )
+})
 public class ReviewEntity {
 
     @Id
@@ -17,11 +22,11 @@ public class ReviewEntity {
     private Long id;
 
     @ManyToOne()
-    @JoinColumn(name = "productId", nullable = false)
+    @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 
     @ManyToOne
-    @JoinColumn(name = "userId", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
     @Column(name = "rating", nullable = false)
