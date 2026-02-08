@@ -22,13 +22,19 @@ public class ReviewRetryConsumer {
 
     @Incoming("reviews-created-retry-in")
     public CompletionStage<Void> consumeReviewRetry(Message<String> msg) throws Exception {
+        try {
 
-        LOG.info("Executing retry for create review");
-        var metadata = msg.getMetadata(IncomingKafkaRecordMetadata.class).orElseThrow();
-        LOG.info("Retry number: " + getRetryCount(metadata));
+            LOG.info("Executing retry for create review");
+            var metadata = msg.getMetadata(IncomingKafkaRecordMetadata.class).orElseThrow();
+            LOG.info("Retry number: " + getRetryCount(metadata));
 
-        LOG.info("Payload: " + msg.getPayload());
-        reviewConsumer.processEvent(msg);
+            LOG.info("Payload: " + msg.getPayload());
+            reviewConsumer.processEvent(msg);
+
+        } catch (Exception e) {
+            LOG.error("Error to retry consume review message", e);
+            reviewConsumer.handleEventException(msg);
+        }
 
         return msg.ack();
     }
@@ -38,7 +44,6 @@ public class ReviewRetryConsumer {
         return retryHeader != null
                 ? Integer.parseInt(new String(retryHeader.value(), StandardCharsets.UTF_8))
                 : 0;
-
     }
 
 }

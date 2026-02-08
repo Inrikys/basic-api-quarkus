@@ -47,7 +47,7 @@ public class ReviewConsumer {
         throw new Exception("Teste");
     }
 
-    private void handleEventException(Message<String> message) {
+    public void handleEventException(Message<String> message) {
 
         int retryCount = getRetryCount(message);
 
