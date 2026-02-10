@@ -1,5 +1,9 @@
 # 📦 API de Avaliação de Produtos
 
+## Arquitetura da solução de avaliar o produto
+
+![Arquitetura do projeto](docs/assets/arquitetura-do-projeto.drawio.png)
+
 ## 📌 Descrição
 Esta API permite que usuários avaliem produtos com notas, comentários e imagens.  
 O sistema aplica regras de negócio para garantir a integridade das avaliações e utiliza processamento assíncrono para recalcular a média dos produtos.
