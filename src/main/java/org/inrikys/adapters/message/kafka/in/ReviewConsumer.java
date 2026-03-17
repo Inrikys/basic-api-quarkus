@@ -36,7 +36,7 @@ public class ReviewConsumer {
             processEvent(msg);
         } catch (Exception e) {
             LOG.warn("Fail to process");
-            handleEventException(msg);
+            handleEventException(msg, e);
         }
         return msg.ack();
     }
@@ -46,32 +46,44 @@ public class ReviewConsumer {
         sqsProducer.send(SQS_URL, payload);
     }
 
-    public void handleEventException(Message<String> message) {
+    public void handleEventException(Message<String> message, Exception e) {
+
+        Headers recordHeader = new RecordHeaders();
+        recordHeader.add("exception", e.getMessage().getBytes(StandardCharsets.UTF_8));
 
         int retryCount = getRetryCount(message);
 
         if (retryCount <= 2) {
             retryCount++;
-            sendToRetry(message, retryCount);
+            recordHeader.add("retry-count", String.valueOf(retryCount).getBytes(StandardCharsets.UTF_8));
+
+            this.applyBackoff(message, recordHeader);
+
+            sendToRetry(message, recordHeader);
         } else {
-            sendToDlt(message);
+            sendToDlt(message, recordHeader);
         }
     }
 
-    private void sendToRetry(Message<String> message, Integer retryCount) {
+    private void sendToRetry(Message<String> message, Headers recordHeader) {
         Emitter<String> retryEmitter = reviewProducer.getReviewRetryEmitter();
+        Message<String> messageWithHeaders = this.buildMessageWithHeaders(message, recordHeader);
 
-        Headers recordHeader = new RecordHeaders();
-        recordHeader.add("retry-count", String.valueOf(retryCount).getBytes(StandardCharsets.UTF_8));
+        retryEmitter.send(messageWithHeaders);
+    }
 
-        retryEmitter.send(
-                Message.of(message.getPayload())
-                        .addMetadata(
-                                OutgoingKafkaRecordMetadata.builder()
-                                        .withHeaders(recordHeader)
-                                        .build()
-                        )
-        );
+    private void applyBackoff(Message<String> message, Headers recordHeader) {
+        int delay = getDelayBackoffInSeconds(message);
+        delay = delay + 2;
+
+        recordHeader.add("delay", String.valueOf(delay).getBytes(StandardCharsets.UTF_8));
+
+        try {
+            Thread.sleep(delay * 1000L);
+            LOG.info("Waiting for " + delay + " seconds");
+        } catch (InterruptedException interruptedException) {
+            Thread.currentThread().interrupt();
+        }
     }
 
     private int getRetryCount(Message<String> message) {
@@ -85,8 +97,29 @@ public class ReviewConsumer {
                 .orElse(0);
     }
 
-    private void sendToDlt(Message<String> message) {
-        reviewProducer.getReviewDltEmitter().send(message);
+    private int getDelayBackoffInSeconds(Message<String> message) {
+        return message.getMetadata(IncomingKafkaRecordMetadata.class)
+                .flatMap(metadata ->
+                        StreamSupport.stream(metadata.getHeaders().spliterator(), false)
+                                .filter(h -> h.key().equals("delay"))
+                                .findFirst()
+                )
+                .map(header -> Integer.parseInt(new String(header.value())))
+                .orElse(0);
+    }
+
+    private Message<String> buildMessageWithHeaders(Message<String> message, Headers recordHeader) {
+        return Message.of(message.getPayload())
+                .addMetadata(
+                        OutgoingKafkaRecordMetadata.builder()
+                                .withHeaders(recordHeader)
+                                .build()
+                );
+    }
+
+    private void sendToDlt(Message<String> message, Headers recordHeader) {
+        Message<String> messageWithHeaders = this.buildMessageWithHeaders(message, recordHeader);
+        reviewProducer.getReviewDltEmitter().send(messageWithHeaders);
     }
 
 }

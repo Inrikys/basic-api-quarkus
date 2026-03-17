@@ -21,7 +21,7 @@ public class ReviewRetryConsumer {
     }
 
     @Incoming("reviews-created-retry-in")
-    public CompletionStage<Void> consumeReviewRetry(Message<String> msg) throws Exception {
+    public CompletionStage<Void> consumeReviewRetry(Message<String> msg) {
         try {
 
             LOG.info("Executing retry for create review");
@@ -33,7 +33,7 @@ public class ReviewRetryConsumer {
 
         } catch (Exception e) {
             LOG.error("Error to retry consume review message", e);
-            reviewConsumer.handleEventException(msg);
+            reviewConsumer.handleEventException(msg, e);
         }
 
         return msg.ack();

@@ -1,12 +1,18 @@
 package org.inrikys.adapters.store.entities;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
+@Entity(name= "dlt_entity")
+@Table(name= "DLT_ENTITY")
 public class DltEntity {
 
+    @Id
     @Column(name = "id")
     String id;
 
@@ -28,13 +34,16 @@ public class DltEntity {
     @Column(name = "headers")
     String headers;
 
+    @Column(name = "exception")
+    String exception;
+
     @CreationTimestamp
     LocalDateTime creationTime;
 
     public DltEntity() {
     }
 
-    public DltEntity(String id, String topic, Integer partition, Long offset, String key, String payload, String headers) {
+    public DltEntity(String id, String topic, Integer partition, Long offset, String key, String payload, String headers, String exception) {
         this.id = id;
         this.topic = topic;
         this.partition = partition;
@@ -42,6 +51,7 @@ public class DltEntity {
         this.key = key;
         this.payload = payload;
         this.headers = headers;
+        this.exception = exception;
     }
 
     public String getId() {
@@ -74,5 +84,9 @@ public class DltEntity {
 
     public LocalDateTime getCreationTime() {
         return creationTime;
+    }
+
+    public String getException() {
+        return exception;
     }
 }
