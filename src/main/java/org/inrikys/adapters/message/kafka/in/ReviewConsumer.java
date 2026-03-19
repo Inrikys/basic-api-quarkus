@@ -1,8 +1,11 @@
 package org.inrikys.adapters.message.kafka.in;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import io.smallrye.reactive.messaging.kafka.api.IncomingKafkaRecordMetadata;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.persistence.SchemaValidationException;
+import jakarta.validation.ValidationException;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeaders;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -50,6 +53,10 @@ public class ReviewConsumer {
 
         Headers recordHeader = new RecordHeaders();
         recordHeader.add("exception", e.getMessage().getBytes(StandardCharsets.UTF_8));
+
+        if (isPoisonPill(e)) {
+            sendToDlt(message, recordHeader);
+        }
 
         int retryCount = getRetryCount(message);
 
@@ -120,6 +127,16 @@ public class ReviewConsumer {
     private void sendToDlt(Message<String> message, Headers recordHeader) {
         Message<String> messageWithHeaders = this.buildMessageWithHeaders(message, recordHeader);
         reviewProducer.getReviewDltEmitter().send(messageWithHeaders);
+    }
+
+    private boolean isPoisonPill(Exception e) {
+        if (e instanceof IllegalArgumentException ||
+                e instanceof ValidationException ||
+                e instanceof JsonParseException) {
+            return true;
+        }
+
+        return false;
     }
 
 }
