@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonParseException;
 import io.smallrye.reactive.messaging.kafka.api.IncomingKafkaRecordMetadata;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.SchemaValidationException;
 import jakarta.validation.ValidationException;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.header.internals.RecordHeaders;
